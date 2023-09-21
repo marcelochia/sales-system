@@ -1,0 +1,49 @@
+services:
+  api:
+    build:
+      args:
+        user: ${USERNAME}
+        uid: ${USERID}
+      context: ./
+      dockerfile: Dockerfile
+    image: php8_2
+    container_name: sales-web-system-api
+    working_dir: /var/www
+    volumes:
+      - ./sales-web-system-api:/var/www
+    networks:
+      - sales-web-system
+
+  db:
+    image: mysql:latest
+    container_name: sales-web-system-db
+    environment:
+      MYSQL_DATABASE: sales_web_system
+      MYSQL_ROOT_PASSWORD: sales_web_system
+      MYSQL_PASSWORD: sales_web_system
+      MYSQL_USER: sales_web_system
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    restart: unless-stopped
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    networks:
+      - sales-web-system
+
+  nginx:
+    image: nginx:latest
+    container_name: sales-web-system-nginx
+    restart: unless-stopped
+    ports:
+      - ${NGINX_PORT}:80
+    volumes:
+      - ./sales-web-system-api:/var/www
+      - ./nginx:/etc/nginx/conf.d
+    networks:
+      - sales-web-system
+
+networks:
+  sales-web-system:
+    driver: bridge
