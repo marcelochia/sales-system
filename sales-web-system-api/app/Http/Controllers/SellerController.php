@@ -9,6 +9,7 @@ use App\Http\Requests\SellerRequest;
 use App\Http\Resources\SaleResource;
 use App\Http\Resources\SellerResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
@@ -16,10 +17,10 @@ class SellerController extends Controller
 {
     public function __construct(private SellerService $service) {}
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $sellers = $this->service->getAllSellers();
+            $sellers = $this->service->getAllSellers(query: $request->q);
 
             return response()->json(SellerResource::collection($sellers));
 

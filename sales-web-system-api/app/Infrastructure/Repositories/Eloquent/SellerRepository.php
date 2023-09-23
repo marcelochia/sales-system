@@ -33,6 +33,23 @@ class SellerRepository implements SellerRepositoryInterface
         return $model ? $this->bindingEntity($model) : null;
     }
 
+    public function findBy(array $filters): array
+    {
+        $sellers = [];
+
+        $results = Model::where(function ($query) use ($filters) {
+            foreach ($filters as $key => $value) {
+                $query->orwhere($key, 'like', '%' . $value . '%');
+            }
+        })->get();
+
+        foreach ($results as $result) {
+            $sellers[] = $this->bindingEntity($result);
+        }
+
+        return $sellers;
+    }
+
     public function save(Seller $seller): void
     {
         $model = Model::create([

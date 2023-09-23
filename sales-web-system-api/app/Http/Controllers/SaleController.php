@@ -8,6 +8,7 @@ use App\Http\Requests\SaleRequest;
 use App\Http\Resources\SaleResource;
 use DateTime;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
@@ -15,10 +16,10 @@ class SaleController extends Controller
 {
     public function __construct(private SaleService $service) {}
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $sales = $this->service->getAllSales();
+            $sales = $this->service->getAllSales(query: $request->q);
 
             return response()->json(SaleResource::collection($sales));
 

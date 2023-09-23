@@ -29,6 +29,23 @@ class SaleRepository implements SaleRepositoryInterface
         return Model::find($id) ? $this->bindingEntity(Model::find($id)) : null;
     }
 
+    public function findBy(array $filters): array
+    {
+        $sellers = [];
+
+        $results = Model::where(function ($query) use ($filters) {
+            foreach ($filters as $key => $value) {
+                $query->orwhere($key, 'like', '%' . $value . '%');
+            }
+        })->get();
+
+        foreach ($results as $result) {
+            $sellers[] = $this->bindingEntity($result);
+        }
+
+        return $sellers;
+    }
+
     public function getBySeller(Seller $seller): array
     {
         $sellers = [];

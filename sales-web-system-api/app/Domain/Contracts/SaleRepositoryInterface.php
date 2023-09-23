@@ -11,6 +11,8 @@ interface SaleRepositoryInterface
     public function all(): array;
     public function findById(int $id): ?Sale;
     /** @return Sale[] */
+    public function findBy(array $filter): array;
+    /** @return Sale[] */
     public function getBySeller(Seller $seller): array;
     public function save(Sale $seller): void;
     public function deleteById(int $id): void;

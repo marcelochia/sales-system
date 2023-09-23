@@ -14,9 +14,12 @@ class SaleService
     public function __construct(private SaleRepositoryInterface $saleRepository, private SellerRepositoryInterface $sellerRepository) {}
 
     /** @return Sale[] */
-    public function getAllSales(): array
+    public function getAllSales(?string $query = null): array
     {
-        return $this->saleRepository->all();
+        return $this->saleRepository->findBy([
+            'value' => $query,
+            'date' => $query
+        ]);
     }
 
     /** @throws EntityNotFoundException se a venda não existir  */

@@ -13,9 +13,12 @@ class SellerService
     public function __construct(private SellerRepositoryInterface $sellerRepository, private SaleRepositoryInterface $saleRepository) {}
 
     /** @return Seller[] */
-    public function getAllSellers(): array
+    public function getAllSellers(?string $query = null): array
     {
-        return $this->sellerRepository->all();
+        return $this->sellerRepository->findBy([
+            'name' => $query,
+            'email' => $query
+        ]);
     }
 
     /** @throws EntityNotFoundException se o vendedor não existir  */
