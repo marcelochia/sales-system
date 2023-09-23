@@ -1,19 +1,21 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SellerController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+Route::group(['prefix' => 'sellers'], function () {
+    Route::post('', [SellerController::class, 'store']);
+    Route::get('', [SellerController::class, 'index']);
+    Route::get('{id}', [SellerController::class, 'show']);
+    Route::get('{id}/sales', [SellerController::class, 'sales']);
+    Route::put('{id}', [SellerController::class, 'update']);
+    Route::delete('{id}', [SellerController::class, 'destroy']);
+});
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'sales'], function () {
+    Route::post('', [SaleController::class, 'store']);
+    Route::get('', [SaleController::class, 'index']);
+    Route::get('{id}', [SaleController::class, 'show']);
+    Route::delete('{id}', [SaleController::class, 'destroy']);
 });

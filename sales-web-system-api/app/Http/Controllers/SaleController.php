@@ -1,0 +1,83 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Domain\Services\SaleService;
+use App\Exceptions\EntityNotFoundException;
+use App\Http\Requests\SaleRequest;
+use App\Http\Resources\SaleResource;
+use DateTime;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+
+class SaleController extends Controller
+{
+    public function __construct(private SaleService $service) {}
+
+    public function index(): JsonResponse
+    {
+        try {
+            $sales = $this->service->getAllSales();
+
+            return response()->json(SaleResource::collection($sales));
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [$e->getFile() => $e->getLine(), 'exception' => class_basename($e)]);
+
+            return $this->errorResponse();
+        }
+    }
+
+    public function store(SaleRequest $request): JsonResponse
+    {
+        try {
+            ['value' => $value, 'date' => $date, 'seller_id' => $seller_id] = $request->validated();
+
+            $date = new DateTime($date);
+
+            $seller = $this->service->createSale($value, $date, $seller_id);
+
+            return response()->json(SaleResource::make($seller), Response::HTTP_CREATED);
+
+        } catch (\DomainException $e) {
+            return $this->errorResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [$e->getFile() => $e->getLine(), 'exception' => class_basename($e)]);
+
+            return $this->errorResponse();
+        }
+    }
+
+    public function show(string $id): JsonResponse
+    {
+        try {
+            $sale = $this->service->getSale($id);
+
+            return response()->json(SaleResource::make($sale));
+
+        } catch (EntityNotFoundException $e) {
+            return $this->errorResponse($e->getMessage(), Response::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [$e->getFile() => $e->getLine(), 'exception' => class_basename($e)]);
+
+            return $this->errorResponse();
+        }
+    }
+
+    public function destroy(string $id): JsonResponse
+    {
+        try {
+            $this->service->deleteSale($id);
+
+            return response()->json(['success' => 'Venda excluída.']);
+
+        } catch (\DomainException $e) {
+            return $this->errorResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [$e->getFile() => $e->getLine(), 'exception' => class_basename($e)]);
+
+            return $this->errorResponse();
+        }
+    }
+}
