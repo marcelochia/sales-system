@@ -20,7 +20,11 @@ class SellerController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $sellers = $this->service->getAllSellers(query: $request->q);
+            $sellers = $this->service->getAllSellers(
+                query: $request->q,
+                sortBy: $request->get('sortBy', 'id'),
+                order: $request->get('order', 'asc'),
+            );
 
             return response()->json(SellerResource::collection($sellers));
 

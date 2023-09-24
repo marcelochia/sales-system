@@ -33,7 +33,7 @@ class SellerRepository implements SellerRepositoryInterface
         return $model ? $this->bindingEntity($model) : null;
     }
 
-    public function findBy(array $filters): array
+    public function findBy(array $filters, string $sortBy = null, string $order = 'asc'): array
     {
         $sellers = [];
 
@@ -41,7 +41,9 @@ class SellerRepository implements SellerRepositoryInterface
             foreach ($filters as $key => $value) {
                 $query->orwhere($key, 'like', '%' . $value . '%');
             }
-        })->get();
+        })
+        ->orderBy($sortBy, $order)
+        ->get();
 
         foreach ($results as $result) {
             $sellers[] = $this->bindingEntity($result);
