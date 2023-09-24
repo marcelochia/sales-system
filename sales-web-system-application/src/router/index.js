@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,7 +6,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: () => import('../views/Sellers.vue')
     },
     {
       path: '/vendedores',
@@ -16,7 +15,7 @@ const router = createRouter({
     },
     {
       path: '/vendedores/cadastrar',
-      name: 'SellerForm',
+      name: 'createSeller',
       component: () => import('../views/SellerForm.vue')
     },
     {
@@ -26,8 +25,23 @@ const router = createRouter({
     },
     {
       path: '/vendas',
-      name: 'salesList',
-      component: () => import('../views/SalesList.vue')
+      name: 'sales',
+      component: () => import('../views/Sales.vue')
+    },
+    {
+      path: '/vendas/adicionar',
+      name: 'createSale',
+      component: () => import('../components/sales/SalesForm.vue')
+    },
+    {
+      path: '/vendas/total-por-dia',
+      name: 'salesTotalPerDay',
+      component: () => import('../components/sales/SalesTotalPerDay.vue')
+    },
+    {
+      path: '/vendas/por-vendedor',
+      name: 'salesPerSeller',
+      component: () => import('../components/sales/SalesPerSeller.vue')
     },
   ]
 })

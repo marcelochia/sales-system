@@ -4,7 +4,13 @@
       <router-link :to="{ name: 'sellers' }">Vendedores</router-link>
     </div>
     <div class="link">
-      <router-link :to="{ name: 'salesList' }">Vendas</router-link>
+      <router-link :to="{ name: 'sales' }">Vendas</router-link>
+    </div>
+    <div class="link">
+      <router-link :to="{ name: 'salesPerSeller' }">Vendas por vendedor</router-link>
+    </div>
+    <div class="link">
+      <router-link :to="{ name: 'salesTotalPerDay' }">Relatório de vendas por dia</router-link>
     </div>
   </div>
 </template>

@@ -1,7 +1,11 @@
 <template>
+    <!-- <div v-if="isLoading"><Loading /></div> -->
+  <!-- <Loading v-if="isLoading" /> -->
+
+
   <form v-on:submit.prevent="save()">
     <div class="field">
-      <label class="label">Name</label>
+      <label class="label">Nome</label>
       <div class="control">
         <input class="input" v-model="seller.name" type="text" placeholder="Nome do vendedor">
       </div>
@@ -78,7 +82,7 @@ async function getSeller() {
 }
 
 function save() {
-  if (sellerId) {
+  if (sellerId.value) {
     updateSeller();
   } else {
     createSeller();
@@ -89,11 +93,15 @@ async function createSeller() {
   isLoading.value = true;
   try {
     await http.post('/sellers', seller);
+
+    seller.name = '';
+    seller.email = '';
+
     successMessage.value = 'Vendedor cadastrado com sucesso.'
     errorMessage.value = null;
   } catch (error) {
+    errorMessage.value = error?.response?.data.error ?? 'erro';
     successMessage.value = null;
-    errorMessage.value = error?.response?.data.error;
   } finally {
     isLoading.value = false;
   }
