@@ -81,4 +81,20 @@ class SaleController extends Controller
             return $this->errorResponse();
         }
     }
+
+    public function dailyTotal(): JsonResponse
+    {
+        try {
+            $totalDailySales = $this->service->getTotalDailySales();
+
+            return response()->json($totalDailySales);
+
+        } catch (\DomainException $e) {
+            return $this->errorResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [$e->getFile() => $e->getLine(), 'exception' => class_basename($e)]);
+
+            return $this->errorResponse();
+        }
+    }
 }

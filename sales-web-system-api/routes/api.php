@@ -16,6 +16,7 @@ Route::group(['prefix' => 'sellers'], function () {
 Route::group(['prefix' => 'sales'], function () {
     Route::post('', [SaleController::class, 'store']);
     Route::get('', [SaleController::class, 'index']);
+    Route::get('daily-total', [SaleController::class, 'dailyTotal']);
     Route::get('{id}', [SaleController::class, 'show']);
     Route::delete('{id}', [SaleController::class, 'destroy']);
 });

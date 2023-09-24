@@ -15,7 +15,7 @@ class SellerRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:3', 'max:255'],
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email:rfc'],
         ];
     }
 

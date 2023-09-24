@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use TypeError;
 
 class Handler extends ExceptionHandler
 {
@@ -25,6 +26,12 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        $this->renderable(function (TypeError $e) {
+            return response()->json([
+                'error' => 'Erro interno.'
+            ], 500);
         });
     }
 }

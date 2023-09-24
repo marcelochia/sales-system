@@ -9,7 +9,7 @@ interface SaleRepositoryInterface
 {
     /** @return Sale[] */
     public function all(): array;
-    public function findById(int $id): ?Sale;
+    public function findById(string $id): ?Sale;
     /** @return Sale[] */
     public function findBy(array $filter): array;
     /** @return Sale[] */

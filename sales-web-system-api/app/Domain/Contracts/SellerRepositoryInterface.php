@@ -8,7 +8,7 @@ interface SellerRepositoryInterface
 {
     /** @return Seller[] */
     public function all(): array;
-    public function findById(int $id): ?Seller;
+    public function findById(string $id): ?Seller;
     public function findByEmail(string $email): ?Seller;
     /** @return Seller[] */
     public function findBy(array $filters, string $sortBy = null, string $order = 'asc'): array;

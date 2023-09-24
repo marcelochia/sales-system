@@ -45,7 +45,7 @@ class SellerService
     }
 
     /** @throws EntityNotFoundException se o vendedor não existir  */
-    public function updateSeller(int $id, string $name, string $email): Seller
+    public function updateSeller(string $id, string $name, string $email): Seller
     {
         $seller = $this->sellerRepository->findById($id);
 

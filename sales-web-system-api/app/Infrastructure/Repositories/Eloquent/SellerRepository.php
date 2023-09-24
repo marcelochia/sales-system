@@ -22,7 +22,7 @@ class SellerRepository implements SellerRepositoryInterface
         return $sellers;
     }
 
-    public function findById(int $id): ?Seller
+    public function findById(string $id): ?Seller
     {
         return Model::find($id) ? $this->bindingEntity(Model::find($id)) : null;
     }

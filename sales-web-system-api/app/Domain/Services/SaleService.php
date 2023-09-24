@@ -23,7 +23,7 @@ class SaleService
     }
 
     /** @throws EntityNotFoundException se a venda não existir  */
-    public function getSale(int $id): Sale
+    public function getSale(string $id): Sale
     {
         $sale = $this->saleRepository->findById($id);
 
@@ -75,5 +75,34 @@ class SaleService
         if ($date->format('Y-m-d') != (new DateTime())->format('Y-m-d')) {
             throw new \DomainException('A data da venda deve ser igual à data atual.');
         }
+    }
+
+    public function getTotalDailySales(): array
+    {
+        $sales = $this->saleRepository->all();
+
+        usort($sales, function($a, $b) {
+            $timestampA = $a->getDate()->getTimestamp();
+            $timestampB = $b->getDate()->getTimestamp();
+            return $timestampB - $timestampA;
+        });
+
+        $arrayOfSales = [];
+
+        /** @var Sale $sale */
+        foreach ($sales as $sale) {
+            $arrayOfSales[] = [
+                'date' => $sale->getDate()->format('Y-m-d'),
+                'value' => $sale->getValue()
+            ];
+        }
+
+        return array_reduce($arrayOfSales, function ($carry, $item) {
+            $date = $item['date'];
+            $value = $item['value'];
+            $carry[$date] = $carry[$date] ?? 0;
+            $carry[$date] += $value;
+            return $carry;
+        }, []);
     }
 }

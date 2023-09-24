@@ -24,7 +24,7 @@ class SaleRepository implements SaleRepositoryInterface
         return $sellers;
     }
 
-    public function findById(int $id): ?Sale
+    public function findById(string $id): ?Sale
     {
         return Model::find($id) ? $this->bindingEntity(Model::find($id)) : null;
     }
