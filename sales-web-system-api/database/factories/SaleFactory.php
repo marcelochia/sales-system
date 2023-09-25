@@ -17,9 +17,12 @@ class SaleFactory extends Factory
      */
     public function definition(): array
     {
-        return[
-            'value' => $this->faker->randomFloat(2, 0, 1_000_000),
+        $value = $this->faker->randomFloat(2, 0, 1_000);
+
+        return [
+            'value' => $value,
             'date' => $this->faker->dateTimeBetween('now', 'now'),
+            'commission' => round($value * 8.5 / 100, 2),
             'seller_id' => Seller::factory(),
         ];
     }

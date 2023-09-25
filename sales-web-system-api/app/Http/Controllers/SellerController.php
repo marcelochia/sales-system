@@ -136,7 +136,7 @@ class SellerController extends Controller
                 return response()->json(['message' => 'Não existem vendas para este vendedor nesta data.']);
             }
 
-            $sendDailySalesReportByEmail->execute(
+            $sendDailySalesReportByEmail->sendReportToSeller(
                 email: $seller->getEmail(),
                 date: $request->date,
                 totalOfSales: $sale[0]->total_sales,
