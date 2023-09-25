@@ -77,12 +77,16 @@ class SaleRepository implements SaleRepositoryInterface
         Model::destroy($id);
     }
 
-    public function getSumOfDailySalesPerSeller(string $date): array
+    public function getSumOfDailySalesPerSeller(string $date, ?int $sellerId): array
     {
-        return DB::table('sales')
+        $query = DB::table('sales')
             ->select(DB::raw('seller_id, COUNT(*) as total_sales, SUM(value) as total_value, SUM(commission) as total_commission'))
-            ->where('date', $date)
-            ->groupBy('seller_id')
+            ->where('date', $date);
+        if (!is_null($sellerId)) {
+            $query->where('seller_id', $sellerId);
+        }
+
+        return $query->groupBy('seller_id')
             ->get()
             ->toArray();
     }

@@ -117,9 +117,8 @@ class SaleService
         }, []);
     }
 
-    /** @return Sale[]  */
-    public function getTotalSalesForTheDayGroupedBySeller(Datetime $day = new DateTime()): array
+    public function getTotalSalesForTheDayGroupedBySeller(Datetime $day = new DateTime(), ?int $sellerId = null): array
     {
-        return $this->saleRepository->getSumOfDailySalesPerSeller($day->format('Y-m-d'));
+        return $this->saleRepository->getSumOfDailySalesPerSeller($day->format('Y-m-d'), $sellerId);
     }
 }

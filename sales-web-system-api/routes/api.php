@@ -9,6 +9,7 @@ Route::group(['prefix' => 'sellers'], function () {
     Route::get('', [SellerController::class, 'index']);
     Route::get('{id}', [SellerController::class, 'show']);
     Route::get('{id}/sales', [SellerController::class, 'sales']);
+    Route::post('{id}/sales/send-report', [SellerController::class, 'sendReport']);
     Route::put('{id}', [SellerController::class, 'update']);
     Route::delete('{id}', [SellerController::class, 'destroy']);
 });

@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\SendDailySalesReportByEmail;
 use App\Domain\Services\SaleService;
 use App\Domain\Services\SellerService;
 use App\Exceptions\EntityNotFoundException;
+use App\Http\Requests\ReportRequest;
 use App\Http\Requests\SellerRequest;
 use App\Http\Resources\SaleResource;
 use App\Http\Resources\SellerResource;
+use DateTime;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -108,6 +111,40 @@ class SellerController extends Controller
             $sales = $saleService->getAllSalesPerSeller($seller);
 
             return response()->json(SaleResource::collection($sales));
+
+        } catch (EntityNotFoundException $e) {
+            return $this->errorResponse($e->getMessage(), Response::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), [$e->getFile(), $e->getLine()]);
+            return $this->errorResponse();
+        }
+    }
+
+    public function sendReport(
+        string $id,
+        ReportRequest $request,
+        SaleService $saleService,
+        SendDailySalesReportByEmail $sendDailySalesReportByEmail
+    ): JsonResponse
+    {
+        try {
+            $seller = $this->service->getSeller($id);
+
+            $sale = $saleService->getTotalSalesForTheDayGroupedBySeller(new DateTime($request->date), $seller->getId());
+
+            if (count($sale) === 0) {
+                return response()->json(['message' => 'Não existem vendas para este vendedor nesta data.']);
+            }
+
+            $sendDailySalesReportByEmail->execute(
+                email: $seller->getEmail(),
+                date: $request->date,
+                totalOfSales: $sale[0]->total_sales,
+                totalSalesValue: $sale[0]->total_value,
+                totalCommissionValue: $sale[0]->total_commission
+            );
+
+            return response()->json(['message' => 'Relatório enviado com sucesso.']);
 
         } catch (EntityNotFoundException $e) {
             return $this->errorResponse($e->getMessage(), Response::HTTP_NOT_FOUND);
