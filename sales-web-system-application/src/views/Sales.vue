@@ -2,7 +2,7 @@
   <h1>Vendas</h1>
 
   <div>
-    <router-link :to="{name: 'createSale'}" class="button is-link">Adicionar</router-link>
+    <router-link :to="{name: 'createSale'}" class="button is-info">Adicionar</router-link>
   </div>
 
   <SalesList />

@@ -1,9 +1,12 @@
 <template>
-    <!-- <div v-if="isLoading"><Loading /></div> -->
-  <!-- <Loading v-if="isLoading" /> -->
 
+  <Loading v-if="isLoading" />
 
-  <form v-on:submit.prevent="save()">
+  <div>
+    <h1>Cadastrar vendedor</h1>
+  </div>
+
+  <form class="box" v-on:submit.prevent="save()">
     <div class="field">
       <label class="label">Nome</label>
       <div class="control">
@@ -20,12 +23,12 @@
 
     <div class="field is-grouped">
       <div class="control">
-        <button type="submit" class="button is-link" :class="{ 'is-loading': isLoading }">
+        <button type="submit" class="button is-info" :disabled="!seller.name || !seller.email">
           {{ sellerId ? 'Editar' : 'Cadastrar' }}
         </button>
       </div>
       <div class="control">
-        <button type="button" class="button is-link is-light" @click="goToSellersList">Cancelar</button>
+        <button type="button" class="button is-info is-light" @click="goToSellersList">Cancelar</button>
       </div>
     </div>
 
@@ -42,6 +45,7 @@
 import http from '../services/http.js';
 import { onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import Loading from "../components/Loading.vue";
 
 const route = useRoute();
 const router = useRouter();

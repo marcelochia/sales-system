@@ -6,7 +6,7 @@
   </div>
 
   <div v-if="isLoading"><Loading /></div>
-  <div v-else class="table-container">
+  <div v-else class="table-container box mt-3">
     <table class="table is-striped is-narrow is-hoverable">
       <thead>
         <th>Data</th>
@@ -19,7 +19,7 @@
           <td>{{ formatDate(sale.date) }}</td>
           <td>{{ formatCurrency(sale.value) }}</td>
           <td>{{ sale.seller.name }}</td>
-          <button class="button is-link is-small is-danger ml-1" @click="deleteSale(sale.id)">Excluir</button>
+          <button class="button is-info is-small is-danger ml-1" @click="deleteSale(sale.id)">Excluir</button>
         </tr>
       </tbody>
     </table>
@@ -102,7 +102,7 @@ async function deleteSale(id) {
   isLoading.value = true;
   try {
     await http.delete(`/sales/${id}`);
-    successMessage.value = 'Vendedor excluído com sucesso.';
+    successMessage.value = 'Venda excluída com sucesso.';
     errorMessage.value = null;
 
     getSales();

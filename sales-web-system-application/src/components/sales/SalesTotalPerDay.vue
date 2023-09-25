@@ -8,7 +8,8 @@
   </div>
 
   <div v-if="isLoading"><Loading /></div>
-  <div v-else class="table-container">
+
+  <div v-else class="box mt-3 table-container">
     <table class="table is-striped is-narrow is-hoverable">
       <thead>
         <th>Data</th>

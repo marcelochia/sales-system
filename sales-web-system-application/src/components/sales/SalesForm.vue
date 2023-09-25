@@ -1,8 +1,12 @@
 <template>
-  <!-- <div v-if="isLoading"><Loading /></div> -->
-  <!-- <Loading v-if="isLoading" /> -->
 
-  <form v-on:submit.prevent="save()">
+  <Loading v-if="isLoading" />
+
+  <div>
+    <h1>Adicionar venda para vendedor</h1>
+  </div>
+
+  <form class="box" v-on:submit.prevent="save()">
     <div class="field">
       <label class="label">Valor</label>
       <div class="control">
@@ -30,10 +34,10 @@
 
     <div class="field is-grouped">
       <div class="control">
-        <button type="submit" class="button is-link" :class="{ 'is-loading': isLoading }">Adicionar</button>
+        <button type="submit" class="button is-info" :disabled="!sale.date || !sale.value || !sale.seller_id">Adicionar</button>
       </div>
       <div class="control">
-        <button type="button" class="button is-link is-light" @click="goToSalesList">Cancelar</button>
+        <button type="button" class="button is-info is-light" @click="goToSalesList">Cancelar</button>
       </div>
     </div>
 

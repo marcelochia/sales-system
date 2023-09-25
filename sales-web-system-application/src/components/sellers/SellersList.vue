@@ -6,7 +6,7 @@
   </div>
 
   <div v-if="isLoading"><Loading /></div>
-  <div v-else class="table-container">
+  <div v-else class="table-container box mt-3">
     <table class="table is-striped is-narrow is-hoverable">
       <thead>
         <th>Nome</th>
@@ -18,8 +18,8 @@
           <td>{{ seller.name }}</td>
           <td>{{ seller.email }}</td>
           <td class="is-flex is-justify-content-center">
-            <router-link :to="{name: 'editSeller', params: {id: seller.id}}" class="button is-link is-small is-warning">Editar</router-link>
-            <button class="button is-link is-small is-danger ml-1" @click="deleteSeller(seller.id)">Excluir</button>
+            <router-link :to="{name: 'editSeller', params: {id: seller.id}}" class="button is-info is-small is-warning">Editar</router-link>
+            <button class="button is-info is-small is-danger ml-1" @click="deleteSeller(seller.id)">Excluir</button>
           </td>
         </tr>
       </tbody>
