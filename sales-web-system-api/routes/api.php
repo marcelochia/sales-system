@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SellerController;
 use Illuminate\Support\Facades\Route;
+
+Route::post('auth', [AuthController::class, 'auth']);
 
 Route::group(['prefix' => 'sellers'], function () {
     Route::post('', [SellerController::class, 'store']);
