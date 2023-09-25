@@ -4,9 +4,11 @@ import Menu from "./Menu.vue";
 
 <template>
   <header>
-    <h1>
-      <img src="../assets/logo.png" alt="Alura Tracker">
-    </h1>
+
+    <div class="box has-background-info">
+      <h1 class="has-text-white	has-text-weight-bold is-size-4">Sistema de Vendas</h1>
+    </div>
+
     <Menu />
   </header>
 </template>

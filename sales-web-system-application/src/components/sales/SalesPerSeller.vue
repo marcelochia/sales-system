@@ -48,7 +48,7 @@
         </tbody>
       </table>
     </div>
-    <div v-if="sales.length === 0 && !isLoading">
+    <div v-if="isSearched && sales.length === 0 && !isLoading">
       <p>O vendedor ainda não realizou nenhuma venda.</p>
     </div>
   </div>
@@ -66,6 +66,7 @@ onMounted(() => {
   getSellers();
 });
 
+const isSearched = ref(false);
 const isLoading = ref(false);
 const successMessage = ref(null);
 const errorMessage = ref(null);
@@ -123,6 +124,8 @@ async function getSalesPerSeller() {
         date: data.date,
       });
     });
+
+    isSearched.value = true;
 
     errorMessage.value = null;
   } catch (error) {
