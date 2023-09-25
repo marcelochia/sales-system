@@ -12,7 +12,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $scheduleTime = env('SCHEDULE_TIME', '23:59');
+
+        $schedule->command('sales:send-daily-report')->dailyAt($scheduleTime);
     }
 
     /**

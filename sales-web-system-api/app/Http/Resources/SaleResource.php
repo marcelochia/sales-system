@@ -18,6 +18,7 @@ class SaleResource extends JsonResource
             'id' => $this->getId(),
             'value' => $this->getValue(),
             'date' => $this->getDate()->format('Y-m-d'),
+            'commission' => $this->getCommission(),
             'seller' => [
                 'id' => $this->getSeller()->getId(),
                 'name' => $this->getSeller()->getName(),

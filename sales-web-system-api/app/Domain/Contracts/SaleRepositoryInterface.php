@@ -16,4 +16,5 @@ interface SaleRepositoryInterface
     public function getBySeller(Seller $seller): array;
     public function save(Sale $seller): void;
     public function deleteById(int $id): void;
+    public function getSumOfDailySalesPerSeller(string $date): array;
 }

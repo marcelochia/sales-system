@@ -8,6 +8,7 @@ use App\Domain\Entity\Seller;
 use App\Domain\ValueObjects\Email;
 use App\Models\Sale as Model;
 use DateTime;
+use Illuminate\Support\Facades\DB;
 
 class SaleRepository implements SaleRepositoryInterface
 {
@@ -64,6 +65,7 @@ class SaleRepository implements SaleRepositoryInterface
         $model = Model::create([
             'value' => $seller->getValue(),
             'date' => $seller->getDate(),
+            'commission' => $seller->getCommission(),
             'seller_id' => $seller->getSeller()->getId()
         ]);
 
@@ -75,12 +77,23 @@ class SaleRepository implements SaleRepositoryInterface
         Model::destroy($id);
     }
 
+    public function getSumOfDailySalesPerSeller(string $date): array
+    {
+        return DB::table('sales')
+            ->select(DB::raw('seller_id, COUNT(*) as total_sales, SUM(value) as total_value, SUM(commission) as total_commission'))
+            ->where('date', $date)
+            ->groupBy('seller_id')
+            ->get()
+            ->toArray();
+    }
+
     private function bindingEntity(Model $model): Sale
     {
         return new Sale(
             id: $model->id,
             value: $model->value,
             date: new DateTime($model->date),
+            commission: $model->commission,
             seller: new Seller($model->seller->name, new Email($model->seller->email), $model->seller->id)
         );
     }

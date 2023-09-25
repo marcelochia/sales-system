@@ -14,6 +14,23 @@ services:
     networks:
       - sales-web-system
 
+  cron:
+    build:
+      args:
+        user: ${USERNAME}
+        uid: ${USERID}
+      context: ./
+      dockerfile: Dockerfile
+    image: php8_2
+    restart: unless-stopped
+    container_name: sales-web-system-cron
+    command: bash -c "php artisan schedule:work"
+    working_dir: /var/www
+    volumes:
+      - ./sales-web-system-api:/var/www
+    networks:
+      - sales-web-system
+
   db:
     image: mysql:latest
     container_name: sales-web-system-db

@@ -13,6 +13,7 @@ class Sale extends Model
     protected $fillable = [
         'value',
         'date',
+        'commission',
         'seller_id',
     ];
 

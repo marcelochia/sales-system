@@ -6,7 +6,13 @@ use DateTime;
 
 class Sale
 {
-    public function __construct(private float $value, private DateTime $date, private Seller $seller, private ?int $id = null) {}
+    public function __construct(
+        private float $value,
+        private DateTime $date,
+        private Seller $seller,
+        private ?int $id = null,
+        private float $commission = 0
+    ) {}
 
     public function getId(): int
     {
@@ -38,5 +44,17 @@ class Sale
     public function getSeller(): Seller
     {
         return $this->seller;
+    }
+
+    public function getCommission(): float
+    {
+        return $this->commission;
+    }
+
+    public function setCommission(float $commission): self
+    {
+        $this->commission = $commission;
+
+        return $this;
     }
 }

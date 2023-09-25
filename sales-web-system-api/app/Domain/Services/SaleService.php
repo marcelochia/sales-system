@@ -40,11 +40,22 @@ class SaleService
 
         $seller = $this->sellerRepository->findById($sellerId);
 
-        $sale = new Sale($value, $date, $seller);
+        $commission = $this->calculateSalesCommision($value);
+
+        $sale = new Sale(value: $value, date: $date, seller: $seller, commission: $commission);
 
         $this->saleRepository->save($sale);
 
         return $sale;
+    }
+
+    public function calculateSalesCommision(float $saleValue): float
+    {
+        $salesCommissionPercentage = (float) env('SALES_COMMISSION_PERCENTAGE', 8.5);
+
+        $salesCommission = $saleValue * $salesCommissionPercentage / 100;
+
+        return round($salesCommission, 2);
     }
 
     /** @throws \DomainException se a data da venda for anterior à data atual */
@@ -104,5 +115,11 @@ class SaleService
             $carry[$date] += $value;
             return $carry;
         }, []);
+    }
+
+    /** @return Sale[]  */
+    public function getTotalSalesForTheDayGroupedBySeller(Datetime $day = new DateTime()): array
+    {
+        return $this->saleRepository->getSumOfDailySalesPerSeller($day->format('Y-m-d'));
     }
 }
