@@ -35,6 +35,8 @@
 
 IMPORTANTE: as schedules são para o envio automático do relatório de vendas, enviado uma vez por dia no horário definido na variável de ambiente `SCHEDULE_TIME` presente no arquivo `./sales-web-system-api/.env`. Se a variável não tiver valor será enviado às 23:59.
 
+- Configure o envio de email nas variáveis de ambiente de prefixo `MAIL_`
+
 - A API estará rodando em http://localhost:8001/api.
 - Os endpoints estão no arquivo README.md do diretório `sales-web-system-api`
 
