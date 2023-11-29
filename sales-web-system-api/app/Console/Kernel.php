@@ -14,7 +14,8 @@ class Kernel extends ConsoleKernel
     {
         $scheduleTime = env('SCHEDULE_TIME', '23:59');
 
-        $schedule->command('sales:send-daily-report')->dailyAt($scheduleTime);
+        $schedule->command('sales:send-daily-report-admin')->dailyAt($scheduleTime);
+        $schedule->command('sales:send-daily-report-sellers')->dailyAt($scheduleTime);
     }
 
     /**

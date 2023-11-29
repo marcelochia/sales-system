@@ -11,7 +11,7 @@ use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-class SendDailySalesReportByEmail extends Command
+class SendDailySalesReportByEmailToAdmin extends Command
 {
     public function __construct(private SaleService $saleService, private SellerService $sellerService)
     {
@@ -23,14 +23,14 @@ class SendDailySalesReportByEmail extends Command
      *
      * @var string
      */
-    protected $signature = 'sales:send-daily-report';
+    protected $signature = 'sales:send-daily-report-admin';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Envia o relatório de vendas do dia por e-mail por vendedor e ao administrador';
+    protected $description = 'Envia o relatório de vendas do dia por e-mail ao administrador';
 
     /**
      * Execute the console command.
@@ -43,7 +43,7 @@ class SendDailySalesReportByEmail extends Command
 
         $salesInTheDay = $this->saleService->getTotalSalesForTheDayGroupedBySeller($date);
 
-        $reportToAdmin = [];
+        $report = [];
 
         $quantityOfSales = 0;
         $sumOfSalesValue = 0;
@@ -57,7 +57,7 @@ class SendDailySalesReportByEmail extends Command
 
             $seller = $this->sellerService->getSeller($sale->seller_id);
 
-            $reportToAdmin[] = [
+            $report[] = [
                 'seller' => $seller->getName(),
                 'totalOfSales' => $sale->total_sales,
                 'totalSalesValue' => $sale->total_value,
@@ -73,31 +73,11 @@ class SendDailySalesReportByEmail extends Command
 
         $admin = User::where('is_admin', true)->first();
 
-        if ($admin) {
-            try {
-                $sendEmailAction->sendReportToAdmin($admin->email, $date->format('d/m/Y'), $reportToAdmin, $totals);
-            } catch (Exception $e) {
-                Log::error('Erro ao enviar relatório de vendas por email para ' . $admin->email, ['error' => $e->getMessage()]);
-            }
+        try {
+            $sendEmailAction->sendReportToAdmin($admin->email, $date->format('d/m/Y'), $report, $totals);
+            $this->info('Relatório diário de vendas enviado com sucesso para o administrador.');
+        } catch (Exception $e) {
+            Log::error('Erro ao enviar relatório de vendas por email para o administrador do sistema:' . $admin->email, ['error' => $e->getMessage()]);
         }
-
-        /** @var stdClass $sale */
-        foreach ($salesInTheDay as $sale) {
-            $seller = $this->sellerService->getSeller($sale->seller_id);
-
-            try {
-                $sendEmailAction->sendReportToSeller(
-                    email: $seller->getEmail(),
-                    date: $date->format('d/m/Y'),
-                    totalOfSales: $sale->total_sales,
-                    totalSalesValue: $sale->total_value,
-                    totalCommissionValue: $sale->total_commission
-                );
-            } catch (Exception $e) {
-                Log::error('Erro ao enviar relatório de vendas por email para ' . $seller->getEmail(), ['error' => $e->getMessage()]);
-            }
-        }
-
-        $this->info('Relatório diário de vendas enviado com sucesso.');
     }
 }
