@@ -29,11 +29,7 @@ class GetSalesPerSellerTest extends TestCase
             '*' => [
                 'id',
                 'value',
-                'date',
-                'seller' => [
-                    'id',
-                    'name'
-                ],
+                'date'
             ],
         ]);
     }

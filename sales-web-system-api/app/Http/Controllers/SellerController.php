@@ -8,9 +8,8 @@ use App\Domain\Services\SellerService;
 use App\Exceptions\ModelNotFoundException;
 use App\Http\Requests\ReportRequest;
 use App\Http\Requests\SellerRequest;
-use App\Http\Resources\SaleResource;
 use App\Http\Resources\SellerResource;
-use DateTime;
+use App\Http\Resources\SellerSalesResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -110,7 +109,7 @@ class SellerController extends Controller
 
             $sales = $saleService->getAllSalesPerSeller($seller);
 
-            return response()->json(SaleResource::collection($sales));
+            return response()->json(SellerSalesResource::collection($sales));
 
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse($e->getMessage(), Response::HTTP_NOT_FOUND);
@@ -130,7 +129,7 @@ class SellerController extends Controller
         try {
             $seller = $this->service->getSeller($id);
 
-            $sale = $saleService->getTotalSalesForTheDayGroupedBySeller(new DateTime($request->date), $seller->id);
+            $sale = $saleService->getTotalSalesForTheDayGroupedBySeller(new \DateTime($request->date), $seller->id);
 
             if (count($sale) === 0) {
                 return response()->json(['message' => 'Não existem vendas para este vendedor nesta data.']);
