@@ -50,7 +50,7 @@ class SaleService
             throw new ModelNotFoundException('Vendedor não encontrado.');
         }
 
-        $commission = $this->calculateSalesCommision($value);
+        $commission = $this->calculateSalesCommision($sellerId, $value);
 
         return Sale::create([
             'value' => $value,
@@ -60,9 +60,9 @@ class SaleService
         ]);
     }
 
-    public function calculateSalesCommision(float $saleValue): float
+    public function calculateSalesCommision(int $sellerId, float $saleValue): float
     {
-        $salesCommissionPercentage = (float) env('SALES_COMMISSION_PERCENTAGE', 8.5);
+        $salesCommissionPercentage = Seller::find($sellerId)->commission_percentage;
 
         $salesCommission = $saleValue * $salesCommissionPercentage / 100;
 

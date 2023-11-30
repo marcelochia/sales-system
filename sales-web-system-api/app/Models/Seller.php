@@ -13,6 +13,11 @@ class Seller extends Model
     protected $fillable = [
         'name',
         'email',
+        'commission_percentage'
+    ];
+
+    public $casts = [
+        'commission_percentage' => 'float'
     ];
 
     public function sales(): HasMany
