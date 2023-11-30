@@ -10,6 +10,7 @@ use App\Http\Requests\ReportRequest;
 use App\Http\Requests\SellerRequest;
 use App\Http\Resources\SellerResource;
 use App\Http\Resources\SellerSalesResource;
+use App\Http\Resources\SellersResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -28,7 +29,7 @@ class SellerController extends Controller
                 order: $request->get('order', 'asc'),
             );
 
-            return response()->json(SellerResource::collection($sellers));
+            return response()->json(SellersResource::collection($sellers));
 
         } catch (\Exception $e) {
             Log::error($e->getMessage(), [$e->getFile(), $e->getLine()]);

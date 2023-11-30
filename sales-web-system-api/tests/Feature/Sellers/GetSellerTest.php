@@ -13,7 +13,7 @@ class GetSellerTest extends TestCase
     private string $apiUrl = '/api/sellers/';
 
     /** @test */
-    public function canGetAllSellersSuccesfully(): void
+    public function canSellerSuccesfully(): void
     {
         $seller = Seller::factory()->create();
 
@@ -23,7 +23,8 @@ class GetSellerTest extends TestCase
         $response->assertJsonFragment([
             'id' => $seller->id,
             'name' => $seller->name,
-            'email' => $seller->email
+            'email' => $seller->email,
+            'sales' => []
         ]);
     }
 
