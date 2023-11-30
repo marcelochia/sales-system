@@ -26,7 +26,10 @@ class GetAllSalesTest extends TestCase
                 'id',
                 'value',
                 'date',
-                'seller_id',
+                'seller' => [
+                    'id',
+                    'name'
+                ],
             ],
         ]);
     }

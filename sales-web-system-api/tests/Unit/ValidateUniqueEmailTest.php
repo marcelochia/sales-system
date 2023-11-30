@@ -2,39 +2,33 @@
 
 namespace Tests\Unit;
 
-use App\Domain\Contracts\SaleRepositoryInterface;
-use App\Domain\Contracts\SellerRepositoryInterface;
-use App\Domain\Entity\Seller;
 use App\Domain\Services\SellerService;
-use App\Domain\ValueObjects\Email;
-use PHPUnit\Framework\TestCase;
+use App\Models\Seller;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class ValidateUniqueEmailTest extends TestCase
 {
-    private object $sellerRepository;
-    private object $saleRepository;
+    use RefreshDatabase;
+
     private SellerService $sellerService;
 
     public function setUp(): void
     {
-        $this->sellerRepository = $this->createMock(SellerRepositoryInterface::class);
-        $this->saleRepository = $this->createMock(SaleRepositoryInterface::class);
+        parent::setUp();
 
-        $this->sellerService = new SellerService($this->sellerRepository, $this->saleRepository);
+        $this->sellerService = new SellerService();
     }
 
     /** @test */
     public function emailNotExists(): void
     {
-        $sellerA = new Seller('Vendedor A', new Email('vendedor_a@empresa.com.br'), 1);
-        $sellerB = new Seller('Vendedor B', new Email('vendedor_b@empresa.com.br'), 2);
+        $seller = new Seller([
+            'name' => 'Vendedor Teste',
+            'email' => 'vendedor_teste@empresa.com.br'
+        ]);
 
-        $this->sellerRepository->expects($this->once())
-            ->method('findByEmail')
-            ->with('vendedor_b@empresa.com.br')
-            ->willReturn(null);
-
-        $result = $this->sellerService->validateEmail($sellerB, 'vendedor_b@empresa.com.br');
+        $result = $this->sellerService->validateEmail($seller, 'vendedor_teste@empresa.com.br');
 
         $this->assertNull($result);
     }
@@ -42,13 +36,12 @@ class ValidateUniqueEmailTest extends TestCase
     /** @test */
     public function emailExists(): void
     {
-        $sellerA = new Seller('Vendedor A', new Email('vendedor_a@empresa.com.br'), 1);
-        $sellerB = new Seller('Vendedor B', new Email('vendedor_a@empresa.com.br'), 2);
+        Seller::factory()->create(['email' => 'vendedor_a@empresa.com.br']);
 
-        $this->sellerRepository->expects($this->once())
-            ->method('findByEmail')
-            ->with('vendedor_a@empresa.com.br')
-            ->willReturn($sellerA);
+        $sellerB = new Seller([
+            'name' => 'Vendedor B',
+            'email' => 'vendedor_a@empresa.com.br'
+        ]);
 
         $this->expectException(\DomainException::class);
         $this->sellerService->validateEmail($sellerB, 'vendedor_a@empresa.com.br');

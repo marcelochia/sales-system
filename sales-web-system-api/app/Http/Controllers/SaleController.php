@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Services\SaleService;
-use App\Exceptions\EntityNotFoundException;
+use App\Exceptions\ModelNotFoundException;
 use App\Http\Requests\SaleRequest;
 use App\Http\Resources\SaleResource;
 use DateTime;
@@ -57,7 +57,7 @@ class SaleController extends Controller
 
             return response()->json(SaleResource::make($sale));
 
-        } catch (EntityNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return $this->errorResponse($e->getMessage(), Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             Log::error($e->getMessage(), [$e->getFile() => $e->getLine(), 'exception' => class_basename($e)]);

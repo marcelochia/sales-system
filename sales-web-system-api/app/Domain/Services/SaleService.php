@@ -3,50 +3,61 @@
 namespace App\Domain\Services;
 
 use App\Domain\Contracts\SaleRepositoryInterface;
-use App\Domain\Contracts\SellerRepositoryInterface;
-use App\Domain\Entity\Sale;
-use App\Domain\Entity\Seller;
-use App\Exceptions\EntityNotFoundException;
+use App\Exceptions\ModelNotFoundException;
+use App\Models\Sale;
+use App\Models\Seller;
 use DateTime;
+use Illuminate\Database\Eloquent\Collection;
 
 class SaleService
 {
-    public function __construct(private SaleRepositoryInterface $saleRepository, private SellerRepositoryInterface $sellerRepository) {}
+    public function __construct(private SaleRepositoryInterface $saleRepository) {}
 
-    /** @return Sale[] */
-    public function getAllSales(?string $query = null): array
+    public function getAllSales(?string $query = null): Collection
     {
-        return $this->saleRepository->findBy([
+        $filters = [
             'value' => $query,
             'date' => $query
-        ]);
+        ];
+
+        return Sale::where(function ($query) use ($filters) {
+            foreach ($filters as $key => $value) {
+                $query->orwhere($key, 'like', '%' . $value . '%');
+            }
+        })->get();
     }
 
-    /** @throws EntityNotFoundException se a venda não existir  */
+    /** @throws ModelNotFoundException se a venda não existir  */
     public function getSale(string $id): Sale
     {
-        $sale = $this->saleRepository->findById($id);
+        $sale = Sale::find($id);
 
         if (is_null($sale)) {
-            throw new EntityNotFoundException('Venda não encontrada.');
+            throw new ModelNotFoundException('Venda não encontrada.');
         }
 
         return $sale;
     }
 
+    /** @throws ModelNotFoundException se o vendedor não existir  */
     public function createSale(float $value, DateTime $date, int $sellerId): Sale
     {
         $this->validateSaleDate($date);
 
-        $seller = $this->sellerRepository->findById($sellerId);
+        $seller = Seller::find($sellerId);
+
+        if (is_null($seller)) {
+            throw new ModelNotFoundException('Vendedor não encontrado.');
+        }
 
         $commission = $this->calculateSalesCommision($value);
 
-        $sale = new Sale(value: $value, date: $date, seller: $seller, commission: $commission);
-
-        $this->saleRepository->save($sale);
-
-        return $sale;
+        return Sale::create([
+            'value' => $value,
+            'date' => $date->format('Y-m-d'),
+            'commission' => $commission,
+            'seller_id' => $seller->id
+        ]);
     }
 
     public function calculateSalesCommision(float $saleValue): float
@@ -61,23 +72,22 @@ class SaleService
     /** @throws \DomainException se a data da venda for anterior à data atual */
     public function deleteSale(int $id): void
     {
-        $sale = $this->saleRepository->findById($id);
+        $sale = Sale::find($id);
 
         if (is_null($sale)) {
             return;
         }
 
-        if ($sale->getDate()->diff(new DateTime())->days > 0) {
+        if ($sale->date->diff(new DateTime())->days > 0) {
             throw new \DomainException('A venda não pode ser excluída porque já foi processada.');
         }
 
-        $this->saleRepository->deleteById($sale->getId());
+        $sale->delete();
     }
 
-    /** @return Sale[] */
-    public function getAllSalesPerSeller(Seller $seller): array
+    public function getAllSalesPerSeller(Seller $seller): Collection
     {
-        return $this->saleRepository->getBySeller($seller);
+        return Sale::where('seller_id', $seller->id)->get();
     }
 
     /** @throws \DomainException se a data for diferente da data corrente */
@@ -90,25 +100,16 @@ class SaleService
 
     public function getTotalDailySales(): array
     {
-        $sales = $this->saleRepository->all();
+        $sales = Sale::all()->toArray();
 
         usort($sales, function($a, $b) {
-            $timestampA = $a->getDate()->getTimestamp();
-            $timestampB = $b->getDate()->getTimestamp();
+            $timestampA = DateTime::createFromFormat('Y-m-d', $a['date'])->getTimestamp();
+            $timestampB = DateTime::createFromFormat('Y-m-d', $b['date'])->getTimestamp();
+
             return $timestampB - $timestampA;
         });
 
-        $arrayOfSales = [];
-
-        /** @var Sale $sale */
-        foreach ($sales as $sale) {
-            $arrayOfSales[] = [
-                'date' => $sale->getDate()->format('Y-m-d'),
-                'value' => $sale->getValue()
-            ];
-        }
-
-        return array_reduce($arrayOfSales, function ($carry, $item) {
+        return array_reduce($sales, function ($carry, $item) {
             $date = $item['date'];
             $value = $item['value'];
             $carry[$date] = $carry[$date] ?? 0;

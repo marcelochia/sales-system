@@ -15,13 +15,13 @@ class SaleResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->getId(),
-            'value' => $this->getValue(),
-            'date' => $this->getDate()->format('Y-m-d'),
-            'commission' => $this->getCommission(),
+            'id' => $this->id,
+            'value' => $this->value,
+            'date' => $this->date->format('Y-m-d'),
+            'commission' => $this->commission,
             'seller' => [
-                'id' => $this->getSeller()->getId(),
-                'name' => $this->getSeller()->getName(),
+                'id' => $this->seller->id,
+                'name' => $this->seller->name,
             ],
         ];
     }

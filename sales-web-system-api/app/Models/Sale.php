@@ -17,6 +17,12 @@ class Sale extends Model
         'seller_id',
     ];
 
+    public $casts = [
+        'value' => 'float',
+        'date' => 'datetime:Y-m-d',
+        'commission' => 'float',
+    ];
+
     public function seller(): BelongsTo
     {
         return $this->belongsTo(Seller::class);

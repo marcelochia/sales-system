@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\SendDailySalesReportByEmail;
 use App\Domain\Services\SaleService;
 use App\Domain\Services\SellerService;
-use App\Exceptions\EntityNotFoundException;
+use App\Exceptions\ModelNotFoundException;
 use App\Http\Requests\ReportRequest;
 use App\Http\Requests\SellerRequest;
 use App\Http\Resources\SaleResource;
@@ -62,7 +62,7 @@ class SellerController extends Controller
 
             return response()->json(SellerResource::make($seller));
 
-        } catch (EntityNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return $this->errorResponse($e->getMessage(), Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             Log::error($e->getMessage(), [$e->getFile(), $e->getLine()]);
@@ -77,7 +77,7 @@ class SellerController extends Controller
 
             return response()->json(SellerResource::make($seller));
 
-        } catch (EntityNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return $this->errorResponse($e->getMessage(), Response::HTTP_NOT_FOUND);
         } catch (\DomainException $e) {
             return $this->errorResponse($e->getMessage(), Response::HTTP_CONFLICT);
@@ -112,7 +112,7 @@ class SellerController extends Controller
 
             return response()->json(SaleResource::collection($sales));
 
-        } catch (EntityNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return $this->errorResponse($e->getMessage(), Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             Log::error($e->getMessage(), [$e->getFile(), $e->getLine()]);
@@ -130,14 +130,14 @@ class SellerController extends Controller
         try {
             $seller = $this->service->getSeller($id);
 
-            $sale = $saleService->getTotalSalesForTheDayGroupedBySeller(new DateTime($request->date), $seller->getId());
+            $sale = $saleService->getTotalSalesForTheDayGroupedBySeller(new DateTime($request->date), $seller->id);
 
             if (count($sale) === 0) {
                 return response()->json(['message' => 'Não existem vendas para este vendedor nesta data.']);
             }
 
             $sendDailySalesReportByEmail->sendReportToSeller(
-                email: $seller->getEmail(),
+                email: $seller->email,
                 date: $request->date,
                 totalOfSales: $sale[0]->total_sales,
                 totalSalesValue: $sale[0]->total_value,
@@ -146,7 +146,7 @@ class SellerController extends Controller
 
             return response()->json(['message' => 'Relatório enviado com sucesso.']);
 
-        } catch (EntityNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return $this->errorResponse($e->getMessage(), Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             Log::error($e->getMessage(), [$e->getFile(), $e->getLine()]);

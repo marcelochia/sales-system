@@ -5,8 +5,8 @@ namespace App\Domain\ValueObjects;
 readonly class Email
 {
     /** @throws \InvalidArgumentException se o email for inválido */
-    public function __construct(public string $email) {
-        if (!self::isValid($email)) {
+    public function __construct(public string $value) {
+        if (!self::isValid($value)) {
             throw new \InvalidArgumentException('O email não é valido.');
         }
     }

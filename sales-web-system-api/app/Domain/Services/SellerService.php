@@ -2,32 +2,38 @@
 
 namespace App\Domain\Services;
 
-use App\Domain\Contracts\SaleRepositoryInterface;
-use App\Domain\Contracts\SellerRepositoryInterface;
-use App\Domain\Entity\Seller;
 use App\Domain\ValueObjects\Email;
-use App\Exceptions\EntityNotFoundException;
+use App\Exceptions\ModelNotFoundException;
+use App\Models\Sale;
+use App\Models\Seller;
+use Illuminate\Database\Eloquent\Collection;
 
 class SellerService
 {
-    public function __construct(private SellerRepositoryInterface $sellerRepository, private SaleRepositoryInterface $saleRepository) {}
+    public function __construct() {}
 
-    /** @return Seller[] */
-    public function getAllSellers(?string $query = null, string $sortBy = null, string $order = 'asc'): array
+    public function getAllSellers(?string $query = null, string $sortBy = null, string $order = 'asc'): Collection
     {
-        return $this->sellerRepository->findBy([
+        $filters = [
             'name' => $query,
             'email' => $query
-        ], $sortBy, $order);
+        ];
+
+        return Seller::where(function ($query) use ($filters) {
+            foreach ($filters as $key => $value) {
+                $query->orwhere($key, 'like', '%' . $value . '%');
+            }
+        })->orderBy($sortBy, $order)
+          ->get();
     }
 
-    /** @throws EntityNotFoundException se o vendedor não existir  */
+    /** @throws ModelNotFoundException se o vendedor não existir  */
     public function getSeller(int $id): Seller
     {
-        $seller = $this->sellerRepository->findById($id);
+        $seller = Seller::find($id);
 
         if (is_null($seller)) {
-            throw new EntityNotFoundException('Vendedor não encontrado.');
+            throw new ModelNotFoundException('Vendedor não encontrado.');
         }
 
         return $seller;
@@ -35,29 +41,28 @@ class SellerService
 
     public function createSeller(string $name, string $email): Seller
     {
-        $seller = new Seller($name, new Email($email));
+        $seller = new Seller([
+            'name' => $name,
+            'email' => (new Email($email))->value
+        ]);
 
         $this->validateEmail($seller, $email);
 
-        $this->sellerRepository->save($seller);
+        $seller->save();
 
         return $seller;
     }
 
-    /** @throws EntityNotFoundException se o vendedor não existir  */
-    public function updateSeller(string $id, string $name, string $email): Seller
+    /** @throws ModelNotFoundException se o vendedor não existir  */
+    public function updateSeller(int $id, string $name, string $email): Seller
     {
-        $seller = $this->sellerRepository->findById($id);
-
-        if (is_null($seller)) {
-            throw new EntityNotFoundException('Vendedor não encontrado.');
-        }
+        $seller = $this->getSeller($id);
 
         $this->validateEmail($seller, $email);
 
-        $seller->setName($name)->setEmail(new Email($email));
-
-        $this->sellerRepository->update($seller);
+        $seller->name = $name;
+        $seller->email = (new Email($email))->value;
+        $seller->save();
 
         return $seller;
     }
@@ -65,27 +70,27 @@ class SellerService
     /** @throws \DomainException se o vendedor tiver vendas relacionadas  */
     public function deleteSeller(string $id): void
     {
-        $seller = $this->sellerRepository->findById($id);
-
-        if (is_null($seller)) {
+        try {
+            $seller = $this->getSeller($id);
+        } catch (ModelNotFoundException) {
             return;
         }
 
-        $salesOfThisSeller = $this->saleRepository->getBySeller($seller);
+        $salesOfThisSeller = Sale::where('seller_id', $seller->id)->get();
 
         if (count($salesOfThisSeller) > 0) {
             throw new \DomainException('Não é possível excluir o vendedor porque tem vendas relacionadas.');
         }
 
-        $this->sellerRepository->deleteById($id);
+        $seller->delete();
     }
 
-    /** @throws \DomainException se o vendedor não existir  */
+    /** @throws \DomainException se o email estiver associado a outro vendedor  */
     public function validateEmail(Seller $seller, string $email): void
     {
-        $existentEmail = $this->sellerRepository->findByEmail($email);
+        $sellerWithExistentEmail = Seller::where('email', $email)->first();
 
-        if (!is_null($existentEmail) && $seller->getId() !== $existentEmail->getId()) {
+        if (!is_null($sellerWithExistentEmail) && $seller->id !== $sellerWithExistentEmail->id) {
             throw new \DomainException('Email já está em uso para outro vendedor.');
         }
     }
