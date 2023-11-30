@@ -1,17 +1,14 @@
 services:
   api:
     build:
-      args:
-        user: ${USERNAME}
-        uid: ${USERID}
-      context: ./sales-web-system-api
+      context: ../sales-web-system-api
       dockerfile: Dockerfile
-    image: php8_2
+    image: sales-web-system-api-php8_2
     container_name: sales-web-system-api
     restart: unless-stopped
     working_dir: /var/www
     volumes:
-      - ./sales-web-system-api:/var/www
+      - ../sales-web-system-api:/var/www
     networks:
       - sales-web-system
 
@@ -29,21 +26,30 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - ./db:/docker-entrypoint-initdb.d
+      - ../db:/docker-entrypoint-initdb.d
     networks:
       - sales-web-system
 
-  nginx:
+  nginx_api:
     image: nginx:latest
     container_name: sales-web-system-nginx
     restart: unless-stopped
     ports:
       - 8001:80
     volumes:
-      - ./sales-web-system-api:/var/www
-      - ./sales-web-system-api/nginx:/etc/nginx/conf.d
+      - ../sales-web-system-api:/var/www
+      - ../sales-web-system-api/nginx:/etc/nginx/conf.d
     networks:
       - sales-web-system
+
+  app_client:
+    image: app-client
+    build:
+      context: ../sales-web-system-client
+      dockerfile: Dockerfile
+    container_name: app-client
+    ports:
+      - 8002:80
 
 networks:
   sales-web-system:

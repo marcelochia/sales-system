@@ -1,7 +1,7 @@
 FROM php:8.2-fpm
 
-ARG user
-ARG uid
+ARG user=marcelo
+ARG uid=1000
 
 RUN apt-get update && apt-get install -y \
     git \
