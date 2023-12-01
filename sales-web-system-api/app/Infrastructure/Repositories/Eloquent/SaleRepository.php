@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Repositories\Eloquent;
 
-use App\Domain\Contracts\SaleRepositoryInterface;
+use App\Interfaces\SaleRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
 class SaleRepository implements SaleRepositoryInterface

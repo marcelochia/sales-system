@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Domain\Contracts\SaleRepositoryInterface;
-use App\Domain\Services\SaleService;
+use App\Interfaces\SaleRepositoryInterface;
+use App\Services\SaleService;
 use PHPUnit\Framework\TestCase;
 
 class ValidateSaleDateTest extends TestCase

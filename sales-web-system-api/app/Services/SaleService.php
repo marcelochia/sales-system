@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domain\Services;
+namespace App\Services;
 
-use App\Domain\Contracts\SaleRepositoryInterface;
+use App\Interfaces\SaleRepositoryInterface;
 use App\Exceptions\ModelNotFoundException;
 use App\Models\Sale;
 use App\Models\Seller;

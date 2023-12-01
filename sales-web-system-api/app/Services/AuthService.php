@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Services;
+namespace App\Services;
 
 use App\Helpers\Jwt;
 use App\Models\User;

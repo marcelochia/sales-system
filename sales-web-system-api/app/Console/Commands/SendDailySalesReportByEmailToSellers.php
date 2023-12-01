@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Actions\SendDailySalesReportByEmail as SendDailySalesReportByEmailAction;
-use App\Domain\Services\SaleService;
-use App\Domain\Services\SellerService;
+use App\Services\SaleService;
+use App\Services\SellerService;
 use DateTime;
 use Exception;
 use Illuminate\Console\Command;

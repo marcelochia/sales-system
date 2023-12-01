@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domain\Services;
+namespace App\Services;
 
-use App\Domain\ValueObjects\Email;
+use App\ValueObjects\Email;
 use App\Exceptions\ModelNotFoundException;
 use App\Models\Sale;
 use App\Models\Seller;

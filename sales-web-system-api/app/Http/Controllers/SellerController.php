@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Actions\SendDailySalesReportByEmail;
-use App\Domain\Services\SaleService;
-use App\Domain\Services\SellerService;
+use App\Services\SaleService;
+use App\Services\SellerService;
 use App\Exceptions\ModelNotFoundException;
 use App\Http\Requests\ReportRequest;
 use App\Http\Requests\SellerRequest;

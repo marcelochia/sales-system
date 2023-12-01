@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Services\SaleService;
+use App\Services\SaleService;
 use App\Exceptions\ModelNotFoundException;
 use App\Http\Requests\SaleRequest;
 use App\Http\Resources\SaleResource;

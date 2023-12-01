@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Domain\Services\SellerService;
+use App\Services\SellerService;
 use App\Models\Seller;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

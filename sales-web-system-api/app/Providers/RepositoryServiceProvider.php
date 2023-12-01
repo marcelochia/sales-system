@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Domain\Contracts\SaleRepositoryInterface;
+use App\Interfaces\SaleRepositoryInterface;
 use App\Infrastructure\Repositories\Eloquent\SaleRepository;
 use Illuminate\Support\ServiceProvider;
 
